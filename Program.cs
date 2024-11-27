@@ -1,6 +1,7 @@
 
 using Car_Rental_System_API.Data;
 using Car_Rental_System_API.Repositories;
+using Car_Rental_System_API.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Car_Rental_System_API
@@ -18,6 +19,10 @@ namespace Car_Rental_System_API
             // Register repositories for dependency injection
             builder.Services.AddScoped<ICarRepository, CarRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<ICarRentalService, CarRentalService>();
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
+
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -6,7 +6,8 @@ namespace Car_Rental_System_API.Services
     {
         public async Task SendRentalConfirmationAsync(string email, string carDetails)
         {
-            // Use an email provider like SendGrid or SMTP to send emails
+            //TODO: To implement this
+            // Using an email provider like SendGrid or SMTP to send emails
             Console.WriteLine($"Email sent to {email}: Rental confirmed for {carDetails}");
             await Task.CompletedTask;
         }

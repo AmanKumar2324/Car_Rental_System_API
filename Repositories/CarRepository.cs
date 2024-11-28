@@ -75,28 +75,28 @@ namespace Car_Rental_System_API.Repositories
 
         public async Task<Car> GetCarByIdAsync(int id)
         {
-            // Use stored procedure to fetch a car by ID
+            // Used stored procedure to fetch a car by ID
             var cars = await _context.Cars.FromSqlInterpolated($"EXEC GetCarById @Id = {id}").ToListAsync();
             return cars.FirstOrDefault();
         }
 
         public async Task AddCarAsync(Car car)
         {
-            // Use stored procedure to add a new car
+            // Used stored procedure to add a new car
             await _context.Database.ExecuteSqlInterpolatedAsync(
                 $"EXEC AddCar @Make = {car.Make}, @Model = {car.Model}, @Year = {car.Year}, @PricePerDay = {car.PricePerDay}, @IsAvailable = {car.IsAvailable}");
         }
 
         public async Task UpdateCarAsync(Car car)
         {
-            // Use stored procedure to update a car's details
+            // Used stored procedure to update a car's details
             await _context.Database.ExecuteSqlInterpolatedAsync(
                 $"EXEC UpdateCar @Id = {car.Id}, @Make = {car.Make}, @Model = {car.Model}, @Year = {car.Year}, @PricePerDay = {car.PricePerDay}, @IsAvailable = {car.IsAvailable}");
         }
 
         public async Task DeleteCarAsync(int id)
         {
-            // Use stored procedure to delete a car
+            // Used stored procedure to delete a car
             await _context.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteCar @Id = {id}");
         }
     }

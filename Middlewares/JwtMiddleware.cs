@@ -30,7 +30,7 @@ namespace Car_Rental_System_API.Middlewares
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.UTF8.GetBytes("ThisIsAmanSingh");
+                var key = Encoding.UTF8.GetBytes("ThisIsTheSecretCodeOfAmanSinghForJWTAuth1234");
 
                 tokenHandler.ValidateToken(token, new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
@@ -39,14 +39,12 @@ namespace Car_Rental_System_API.Middlewares
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidIssuer = "CarRentalSystemAPI",
-                    ValidAudience = "CarRentalSystemAPIUsers", // Match Audience 
+                    ValidAudience = "CarRentalSystemAPIUsers", 
                     ValidateLifetime = true
                 }, out var validatedToken);
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 var userId = jwtToken.Claims.First(x => x.Type == "id").Value;
-
-                // Attach user information to context
                 context.Items["User"] = userId;
             }
             catch (Exception ex)

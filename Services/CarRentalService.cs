@@ -38,6 +38,7 @@ namespace Car_Rental_System_API.Services
             await _carRepository.UpdateCarAsync(car);
 
             // Send rental confirmation email
+            //TODO: To implement this
             await _notificationService.SendRentalConfirmationAsync(user.Email, $"{car.Make} {car.Model}");
 
             return car;

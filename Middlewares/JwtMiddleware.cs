@@ -30,7 +30,7 @@ namespace Car_Rental_System_API.Middlewares
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.UTF8.GetBytes("YourSecretKeyHere"); // Replace with the key from appsettings.json
+                var key = Encoding.UTF8.GetBytes("ThisIsAmanSingh");
 
                 tokenHandler.ValidateToken(token, new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
@@ -38,8 +38,8 @@ namespace Car_Rental_System_API.Middlewares
                     IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(key),
                     ValidateIssuer = true,
                     ValidateAudience = true,
-                    ValidIssuer = "CarRentalSystemAPI", // Match Issuer in appsettings.json
-                    ValidAudience = "CarRentalSystemAPIUsers", // Match Audience in appsettings.json
+                    ValidIssuer = "CarRentalSystemAPI",
+                    ValidAudience = "CarRentalSystemAPIUsers", // Match Audience 
                     ValidateLifetime = true
                 }, out var validatedToken);
 
@@ -49,9 +49,14 @@ namespace Car_Rental_System_API.Middlewares
                 // Attach user information to context
                 context.Items["User"] = userId;
             }
-            catch
+            catch (Exception ex)
             {
-                // Token validation failed; user is not attached
+                Console.WriteLine($"Token validation failed: {ex.Message}");
+
+                context.Items["Unauthorized"] = true;
+
+                context.Response.StatusCode = 401;
+                context.Response.Headers.Add("Message", "Invalid or expired token.");
             }
         }
     }

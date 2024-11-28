@@ -3,7 +3,10 @@ using Car_Rental_System_API.Data;
 using Car_Rental_System_API.Repositories;
 using Car_Rental_System_API.Services;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Car_Rental_System_API.Middlewares;
 namespace Car_Rental_System_API
 {
     public class Program
@@ -11,7 +14,21 @@ namespace Car_Rental_System_API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            // JWT Authentication configuration
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                    };
+                });
             // Add services to the container.
             builder.Services.AddDbContext<CarRentalDbContext>(options =>
                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -37,6 +54,7 @@ namespace Car_Rental_System_API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseMiddleware<JwtMiddleware>();
 
             app.UseHttpsRedirection();
 

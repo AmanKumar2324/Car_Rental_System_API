@@ -1,5 +1,5 @@
 ﻿using Car_Rental_System_API.Models;
-using Car_Rental_System_API.Services;
+using Car_Rental_System_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,18 +10,18 @@ namespace Car_Rental_System_API.Controllers
     [ApiController]
     public class CarController : ControllerBase
     {
-        private readonly ICarRentalService _carRentalService;
+        private readonly ICarRepository _carRepository;
 
-        public CarController(ICarRentalService carRentalService)
+        public CarController(ICarRepository carRepository)
         {
-            _carRentalService = carRentalService;
+            _carRepository = carRepository;
         }
 
         // GET: api/Car/available
         [HttpGet("available")]
         public async Task<ActionResult<IEnumerable<Car>>> GetAvailableCars()
         {
-            var cars = await _carRentalService.GetAvailableCarsAsync();
+            var cars = await _carRepository.GetAvailableCarsAsync();
             return Ok(cars);
         }
 
@@ -31,8 +31,14 @@ namespace Car_Rental_System_API.Controllers
         {
             try
             {
-                var rentedCar = await _carRentalService.RentCarAsync(carId, userId);
-                return Ok(rentedCar);
+                var car = await _carRepository.GetCarByIdAsync(carId);
+                if (car == null || !car.IsAvailable)
+                    return BadRequest(new { message = "Car is not available." });
+
+                car.IsAvailable = false;
+                await _carRepository.UpdateCarAsync(car);
+
+                return Ok(car);
             }
             catch (System.Exception ex)
             {
@@ -46,8 +52,69 @@ namespace Car_Rental_System_API.Controllers
         {
             try
             {
-                await _carRentalService.ReturnCarAsync(carId);
+                var car = await _carRepository.GetCarByIdAsync(carId);
+                if (car == null)
+                    return NotFound();
+
+                car.IsAvailable = true;
+                await _carRepository.UpdateCarAsync(car);
+
                 return Ok(new { message = "Car returned successfully." });
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        // GET: api/Car/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Car>> GetCarById(int id)
+        {
+            var car = await _carRepository.GetCarByIdAsync(id);
+            if (car == null)
+                return NotFound();
+            return Ok(car);
+        }
+
+        // POST: api/Car
+        [HttpPost]
+        public async Task<IActionResult> AddCar(Car car)
+        {
+            try
+            {
+                await _carRepository.AddCarAsync(car);
+                return Ok(new { message = "Car added successfully." });
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        // PUT: api/Car
+        [HttpPut]
+        public async Task<IActionResult> UpdateCar(Car car)
+        {
+            try
+            {
+                await _carRepository.UpdateCarAsync(car);
+                return Ok(new { message = "Car updated successfully." });
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        // DELETE: api/Car/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCar(int id)
+        {
+            try
+            {
+                await _carRepository.DeleteCarAsync(id);
+                return Ok(new { message = "Car deleted successfully." });
             }
             catch (System.Exception ex)
             {

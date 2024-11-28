@@ -21,7 +21,7 @@ namespace Car_Rental_System_API.Models
 
         [Required]
         [Range(0.0, double.MaxValue, ErrorMessage = "Price per day must be a positive value.")]
-        public decimal Price { get; set; }
+        public decimal PricePerDay { get; set; }
 
         [Required]
         public bool IsAvailable { get; set; }

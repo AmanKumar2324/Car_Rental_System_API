@@ -14,16 +14,39 @@ namespace Car_Rental_System_API.Services
             _userRepository = userRepository;
         }
 
+        //public async Task<User> RegisterUserAsync(User user)
+        //{
+        //    if (await _userRepository.GetUserByEmailAsync(user.Email) != null)
+        //        throw new Exception("Email is already in use.");
+
+        //    // Hash the password (this is a placeholder, use a library like BCrypt)
+        //    user.PasswordHash = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(user.PasswordHash));
+        //    await _userRepository.AddUserAsync(user);
+        //    return user;
+        //}
         public async Task<User> RegisterUserAsync(User user)
         {
-            if (await _userRepository.GetUserByEmailAsync(user.Email) != null)
-                throw new Exception("Email is already in use.");
+            try
+            {
+                if (await _userRepository.GetUserByEmailAsync(user.Email) != null)
+                    throw new Exception("Email is already in use.");
 
-            // Hash the password (this is a placeholder, use a library like BCrypt)
-            user.PasswordHash = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(user.PasswordHash));
-            await _userRepository.AddUserAsync(user);
-            return user;
+                // Hash the password (replace with a secure hashing mechanism)
+                user.PasswordHash = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(user.PasswordHash));
+
+                await _userRepository.AddUserAsync(user);
+                return user;
+            }
+            catch (Exception ex)
+            {
+                // Log the detailed error
+                Console.WriteLine($"Error: {ex.Message}");
+                if (ex.InnerException != null)
+                    Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+                throw;
+            }
         }
+
 
         public async Task<string> AuthenticateUserAsync(string email, string password)
         {

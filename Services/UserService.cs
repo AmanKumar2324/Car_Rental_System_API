@@ -26,7 +26,7 @@ namespace Car_Rental_System_API.Services
                 if (await _userRepository.GetUserByEmailAsync(user.Email) != null)
                     throw new Exception("Email is already in use.");
 
-                // Hash the password (replace with a secure hashing mechanism)
+                // Hashing the password (replace with a secure hashing mechanism)
                 user.PasswordHash = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(user.PasswordHash));
 
                 await _userRepository.AddUserAsync(user);
@@ -34,7 +34,7 @@ namespace Car_Rental_System_API.Services
             }
             catch (Exception ex)
             {
-                // Log the detailed error
+                // Logging the detailed error
                 Console.WriteLine($"Error: {ex.Message}");
                 if (ex.InnerException != null)
                     Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
@@ -42,16 +42,6 @@ namespace Car_Rental_System_API.Services
             }
         }
 
-
-        //public async Task<string> AuthenticateUserAsync(string email, string password)
-        //{
-        //    var user = await _userRepository.GetUserByEmailAsync(email);
-        //    if (user == null || user.PasswordHash != Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(password)))
-        //        throw new Exception("Invalid email or password.");
-
-        //    // Generatint a JWT token (use a library like System.IdentityModel.Tokens.Jwt)
-        //    return "temp-jwt-token"; // Replace with actual JWT generation logic
-        //}
         public async Task<string> AuthenticateUserAsync(string email, string password)
         {
             // Validate user credentials
